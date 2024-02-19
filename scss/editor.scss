@@ -1,0 +1,14 @@
+.cm-editor {
+    outline: none !important;
+}
+
+.cm-content {
+    font-size: 1rem;
+    font-family: 'Consolas', 'Microsoft YaHei';
+}
+
+.text-editor {
+    .cm-editor {
+        height: 250px;
+    }
+}
