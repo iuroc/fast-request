@@ -3,6 +3,7 @@ import { Route } from 'vanjs-router'
 import { Dropdown } from 'bootstrap'
 import { TextUtil } from './mixin'
 import { Editor } from './editor'
+import ClipboardJS from 'clipboard'
 
 const { button, div, hr } = van.tags
 
@@ -116,10 +117,29 @@ export default () => {
                             }
                         }
                     }, '交换编辑框'),
+                    hr({ class: 'dropdown-divider' }),
+                    () => {
+                        const ele = div({
+                            class: 'dropdown-item', role: 'button'
+                        }, '复制输入框')
+                        new ClipboardJS(ele, {
+                            text: () => inputEditor.getText()
+                        })
+                        return ele
+                    },
+                    () => {
+                        const ele = div({
+                            class: 'dropdown-item', role: 'button'
+                        }, '复制输出框')
+                        new ClipboardJS(ele, {
+                            text: () => outputEditor.getText()
+                        })
+                        return ele
+                    },
                 )
             )
         ),
         inputEditor.element,
         outputEditor.element
     )
-} 
+}
