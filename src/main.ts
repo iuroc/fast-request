@@ -1,4 +1,4 @@
-/// <reference types="vite" />
+/// <reference types="vite/client" />
 import van from 'vanjs-core'
 import Nav from './nav'
 import Home from './route/home'

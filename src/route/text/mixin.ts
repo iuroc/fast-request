@@ -1,10 +1,33 @@
-import van from 'vanjs-core'
-import { setupEditor } from './editor'
 
-const { div } = van.tags
+export class TextUtil {
+    /** Base64 编码 */
+    public static base64Encode = (str: string) => {
+        try {
+            const encoder = new TextEncoder()
+            const nums: number[] = []
+            encoder.encode(str).forEach(i => nums.push(i))
+            return btoa(String.fromCharCode(...nums))
+        } catch (error: any) {
+            return `Base64 编码失败：${error.message}`
+        }
+    }
 
-export const makeEditor = () => {
-    const ele = div({ class: 'text-editor border border-3 rounded-3 overflow-hidden mb-3' })
-    const view = setupEditor(ele)
-    return { ele, view }
+    /** Base64 解码 */
+    public static base64Decode = (str: string) => {
+        try {
+            const decodedString = atob(str)
+            const decoder = new TextDecoder()
+            const uint8Array = new Uint8Array(decodedString.length)
+            for (let i = 0; i < decodedString.length; i++)
+                uint8Array[i] = decodedString.charCodeAt(i)
+            return decoder.decode(uint8Array)
+        } catch (error: any) {
+            return `Base64 解码失败：${error.message}`
+        }
+    }
+
+    /** 去除每行首尾空白 */
+    public static trimPerLine = (str: string) => {
+        return str.split('\n').map(line => line.trim()).join('\n')
+    }
 }

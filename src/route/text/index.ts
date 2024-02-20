@@ -1,14 +1,13 @@
 import van from 'vanjs-core'
 import { Route } from 'vanjs-router'
 import { Dropdown } from 'bootstrap'
-import { makeEditor } from './mixin'
-import { base64Decode, base64Encode } from '../../util'
-import { getText, setText } from './editor'
+import { TextUtil } from './mixin'
+import { Editor } from './editor'
 
 const { button, div, hr } = van.tags
 
-export const { ele: inputEle, view: inputView } = makeEditor()
-export const { ele: outputEle, view: outputView } = makeEditor()
+const inputEditor = new Editor()
+const outputEditor = new Editor()
 
 export default () => {
     const dropBtn = button({
@@ -26,75 +25,101 @@ export default () => {
             div({ class: 'btn-group' },
                 button({
                     class: 'btn btn-danger', onclick() {
-                        setText(inputView, '')
-                        setText(outputView, '')
+                        inputEditor.setText('')
+                        outputEditor.setText('')
                     }
                 }, '清空'),
                 dropBtn,
                 div({ class: 'dropdown-menu dropdown-menu-end shadow overflow-auto', style: 'max-height: 600px;' },
                     div({
                         class: 'dropdown-item', role: 'button', onclick() {
-                            setText(outputView, base64Encode(getText(inputView)))
+                            try {
+                                outputEditor.setText(TextUtil.base64Encode(inputEditor.getText()))
+                            } catch (error) {
+                                if (error instanceof Error) outputEditor.setText(error.message)
+                            }
                         }
                     }, 'Base64 编码'),
                     div({
                         class: 'dropdown-item', role: 'button', onclick() {
-                            setText(outputView, base64Decode(getText(inputView)))
+                            try {
+                                outputEditor.setText(TextUtil.base64Decode(inputEditor.getText()))
+                            } catch (error) {
+                                if (error instanceof Error) outputEditor.setText(error.message)
+                            }
                         }
                     }, 'Base64 解码'),
                     hr({ class: 'dropdown-divider' }),
                     div({
                         class: 'dropdown-item', role: 'button', onclick() {
-                            setText(outputView, encodeURIComponent(getText(inputView)))
+                            try {
+                                outputEditor.setText(encodeURIComponent(inputEditor.getText()))
+                            } catch (error) {
+                                if (error instanceof Error) outputEditor.setText(error.message)
+                            }
                         }
                     }, 'URL 编码', div({ class: 'small text-secondary' }, 'encodeURIComponent')),
                     div({
                         class: 'dropdown-item', role: 'button', onclick() {
-                            setText(outputView, decodeURIComponent(getText(inputView)))
+                            try {
+                                outputEditor.setText(decodeURIComponent(inputEditor.getText()))
+                            } catch (error) {
+                                if (error instanceof Error) outputEditor.setText(error.message)
+                            }
                         }
                     }, 'URL 解码', div({ class: 'small text-secondary' }, 'decodeURIComponent')),
                     hr({ class: 'dropdown-divider' }),
                     div({
                         class: 'dropdown-item', role: 'button', onclick() {
-                            setText(outputView, escape(getText(inputView)))
+                            try {
+                                outputEditor.setText(escape(inputEditor.getText()))
+                            } catch (error) {
+                                if (error instanceof Error) outputEditor.setText(error.message)
+                            }
                         }
                     }, 'Escape 编码'),
                     div({
                         class: 'dropdown-item', role: 'button', onclick() {
-                            setText(outputView, unescape(getText(inputView)))
+                            try {
+                                outputEditor.setText(unescape(inputEditor.getText()))
+                            } catch (error) {
+                                if (error instanceof Error) outputEditor.setText(error.message)
+                            }
                         }
                     }, 'Escape 解码'),
                     hr({ class: 'dropdown-divider' }),
                     div({
                         class: 'dropdown-item', role: 'button', onclick() {
                             try {
-                                const inputStr = getText(inputView)
+                                const inputStr = inputEditor.getText()
                                 const outputStr = JSON.stringify(JSON.parse(inputStr), null, 4)
-                                setText(outputView, outputStr)
+                                outputEditor.setText(outputStr)
                             } catch (error) {
-                                if (error instanceof Error) setText(outputView, error.message)
+                                if (error instanceof Error) outputEditor.setText(error.message)
                             }
                         }
                     }, 'JSON 格式化'),
                     div({
                         class: 'dropdown-item', role: 'button', onclick() {
-                            const inputStr = getText(inputView)
+                            const inputStr = inputEditor.getText()
                             const outputStr = inputStr.split('\n').map(line => line.trim()).join('\n')
-                            setText(outputView, outputStr)
+                            outputEditor.setText(outputStr)
                         }
-                    }, '去除每行首尾空格'),
+                    }, '去除每行首尾空白'),
                     div({
                         class: 'dropdown-item', role: 'button', onclick() {
-                            const inputStr = inputView.state.doc.toString()
-                            const outputStr = outputView.state.doc.toString()
-                            setText(outputView, inputStr)
-                            setText(inputView, outputStr)
+                            const inputStr = inputEditor.getText()
+                            const outputStr = outputEditor.getText()
+                            if (inputStr != outputStr) {
+                                inputEditor.setText(outputStr)
+                                outputEditor.setText(inputStr)
+                            }
                         }
                     }, '交换编辑框'),
                 )
             )
         ),
-        inputEle,
-        outputEle,
+        inputEditor.element,
+        outputEditor.element
     )
-}
+} 
