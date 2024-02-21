@@ -1,17 +1,13 @@
-/**
- * State Group
- * @author iuroc
- */
-export class SG<T = any> {
-    public constructor(private init: T) { }
+import van, { State } from 'vanjs-core'
+import { SG } from '../../state'
+import { mode, pad } from 'crypto-js'
 
-    public get<Key extends keyof T>(key: Key): T[Key] {
-        return this.init[key]
-    }
-    public obj<Key extends keyof T>(key: Key) {
-        return new SG(this.init[key])
-    }
-    public set<Key extends keyof T>(key: Key, value: T[Key]) {
-        this.init[key] = value
-    }
-}
+export default new SG({
+    aesSet: {
+        mode: van.state(<keyof typeof mode>''),
+        padding: van.state(<keyof typeof pad>''),
+        key: van.state(''),
+        iv: van.state(''),
+    },
+    workType: '' as 'decode' | 'encode'
+})

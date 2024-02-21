@@ -1,14 +1,15 @@
 import van from 'vanjs-core'
 import { Route } from 'vanjs-router'
 import { Dropdown } from 'bootstrap'
-import { TextUtil } from './mixin'
+import { TextUtil, exchangeInput } from './mixin'
 import { Editor } from './editor'
 import ClipboardJS from 'clipboard'
 
 const { button, div, hr } = van.tags
+const { svg, path } = van.tagsNS('http://www.w3.org/2000/svg')
 
-const inputEditor = new Editor()
-const outputEditor = new Editor()
+export const inputEditor = new Editor()
+export const outputEditor = new Editor()
 
 export default () => {
     const dropBtn = button({
@@ -30,8 +31,25 @@ export default () => {
                         outputEditor.setText('')
                     }
                 }, '清空'),
+                () => {
+                    const ele = button({ class: 'btn btn-secondary d-none d-sm-inline-block' }, '复制输入')
+                    new ClipboardJS(ele, {
+                        text: () => inputEditor.getText()
+                    })
+                    return ele
+                },
+                () => {
+                    const ele = button({ class: 'btn btn-warning d-none d-sm-inline-block' }, '复制输出')
+                    new ClipboardJS(ele, {
+                        text: () => outputEditor.getText()
+                    })
+                    return ele
+                },
+                button({ class: 'btn btn-primary', onclick: exchangeInput }, svg({ fill: 'currentColor', class: 'bi bi-arrow-down-up', viewBox: '0 0 16 16' },
+                    path({ 'fill-rule': 'evenodd', 'd': 'M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5' }),
+                )),
                 dropBtn,
-                div({ class: 'dropdown-menu dropdown-menu-end shadow overflow-auto', style: 'max-height: 600px;' },
+                div({ class: 'dropdown-menu dropdown-menu-end shadow overflow-auto user-select-none', style: 'max-height: 600px;' },
                     div({
                         class: 'dropdown-item', role: 'button', onclick() {
                             try {
@@ -107,20 +125,10 @@ export default () => {
                             outputEditor.setText(outputStr)
                         }
                     }, '去除每行首尾空白'),
-                    div({
-                        class: 'dropdown-item', role: 'button', onclick() {
-                            const inputStr = inputEditor.getText()
-                            const outputStr = outputEditor.getText()
-                            if (inputStr != outputStr) {
-                                inputEditor.setText(outputStr)
-                                outputEditor.setText(inputStr)
-                            }
-                        }
-                    }, '交换编辑框'),
-                    hr({ class: 'dropdown-divider' }),
+                    hr({ class: 'dropdown-divider d-sm-none' }),
                     () => {
                         const ele = div({
-                            class: 'dropdown-item', role: 'button'
+                            class: 'dropdown-item d-sm-none', role: 'button'
                         }, '复制输入框')
                         new ClipboardJS(ele, {
                             text: () => inputEditor.getText()
@@ -129,7 +137,7 @@ export default () => {
                     },
                     () => {
                         const ele = div({
-                            class: 'dropdown-item', role: 'button'
+                            class: 'dropdown-item d-sm-none', role: 'button'
                         }, '复制输出框')
                         new ClipboardJS(ele, {
                             text: () => outputEditor.getText()

@@ -1,3 +1,5 @@
+import { inputEditor, outputEditor } from "."
+import { Editor } from "./editor"
 
 export class TextUtil {
     /** Base64 编码 */
@@ -29,5 +31,15 @@ export class TextUtil {
     /** 去除每行首尾空白 */
     public static trimPerLine = (str: string) => {
         return str.split('\n').map(line => line.trim()).join('\n')
+    }
+}
+
+/** 交换编辑框内容 */
+export const exchangeInput = () => {
+    const inputStr = inputEditor.getText()
+    const outputStr = outputEditor.getText()
+    if (inputStr != outputStr) {
+        inputEditor.setText(outputStr)
+        outputEditor.setText(inputStr)
     }
 }

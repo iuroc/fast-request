@@ -12,8 +12,8 @@ const NavItem = (text: string, activeRoutes: string[]) => {
     )
 }
 
-export default () => div({ class: 'navbar navbar-expand bg-success-subtle sticky-top' },
-    div({ class: "container" },
+export default () => div({ class: 'navbar navbar-expand bg-success-subtle sticky-top border-bottom border-2 border-success-subtle' },
+    div({ class: 'container' },
         div({ class: 'navbar-brand text-success-emphasis', role: 'button', onclick: () => routeTo('home') }, 'Fast Request'),
         div({ class: 'collapse navbar-collapse' },
             div({ class: 'navbar-nav' },
